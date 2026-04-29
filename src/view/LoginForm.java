@@ -157,7 +157,7 @@ public class LoginForm extends JFrame {
             JOptionPane.showMessageDialog(this, "Username dan Password wajib diisi!");
             return;
         }
-
+        // MODUL: SQL + Exception Handling
         try {
             Connection conn = Koneksi.getConnection();
             String sql = "SELECT * FROM user WHERE username=? AND password=?";
@@ -183,7 +183,7 @@ public class LoginForm extends JFrame {
                 JOptionPane.showMessageDialog(this, "Username atau Password salah!");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Kesalahan Sistem: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Kesalahan Sistem: " + e.getMessage()); // MODUL 7: EXCEPTION HANDLING
         }
     }
 }

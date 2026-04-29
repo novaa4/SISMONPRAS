@@ -22,7 +22,7 @@ public class Grafik extends JPanel {
         
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         
-        // --- QUERY UNION AGAR SINKRON DENGAN DASHBOARD ---
+        //  QUERY UNION AGAR SINKRON DENGAN DASHBOARD 
         String sql = "SELECT nama_tingkat, SUM(jumlah) AS total FROM (" +
                      "  SELECT t.nama_tingkat, COUNT(*) AS jumlah " +
                      "  FROM prestasi_akademik p " +
@@ -42,11 +42,11 @@ public class Grafik extends JPanel {
             while (rs.next()) {
                 dataset.addValue(rs.getInt("total"), "Prestasi", rs.getString("nama_tingkat"));
             }
-        } catch (Exception e) { 
+        } catch (Exception e) { // MODUL 7: Exception Handling
             e.printStackTrace(); 
         }
 
-        // 1. Buat Chart
+        // Chart
         JFreeChart chart = ChartFactory.createBarChart(
                 "Statistik Tingkat Prestasi (Gabungan)", 
                 "Tingkat", 
@@ -58,18 +58,15 @@ public class Grafik extends JPanel {
                 false
         );
 
-        // 2. Styling (Tetap Putih Bersih)
         chart.setBackgroundPaint(Color.WHITE);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setBackgroundPaint(Color.WHITE);
         plot.setRangeGridlinePaint(new Color(230, 230, 230));
         plot.setOutlineVisible(false);
-        
-        // 3. Set Angka Bulat pada Sumbu Y
+
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        // 4. Custom Renderer Pastel
         BarRenderer renderer = new BarRenderer() {
             @Override
             public Paint getItemPaint(int row, int column) {
@@ -87,7 +84,6 @@ public class Grafik extends JPanel {
         renderer.setItemMargin(0.2); 
         plot.setRenderer(renderer);
 
-        // 5. Output ke Panel
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(800, 500));
         chartPanel.setBackground(Color.WHITE);

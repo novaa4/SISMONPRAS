@@ -24,7 +24,7 @@ public class UploadForm extends JFrame{
 
         setTitle("Upload Sertifikat - " + id);
         setSize(500, 600);
-        setLocationRelativeTo(null); // Biar muncul di tengah layar
+        setLocationRelativeTo(null); 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setLayout(new BorderLayout());
@@ -44,7 +44,7 @@ public class UploadForm extends JFrame{
         headerLabel.setForeground(darkBlueSismon);
         mainPanel.add(headerLabel, BorderLayout.NORTH);
 
-        // --- DROPZONE ---
+        //  DROPZONE 
         JPanel dropZone = new JPanel(new GridBagLayout());
         dropZone.setBackground(Color.WHITE);
         dropZone.setBorder(BorderFactory.createCompoundBorder(
@@ -71,12 +71,11 @@ public class UploadForm extends JFrame{
         btnPilih.setPreferredSize(new Dimension(150, 40));
         btnPilih.setFocusPainted(false);
 
-        // --- Cari bagian ini di kodemu dan tambahkan yang baru ---
         JLabel textInstruction = new JLabel("Pilih file sertifikat kamu di bawah ini");
         textInstruction.setForeground(Color.GRAY);
         textInstruction.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        // Tambahkan Panel Ikon (Baris PDF, JPG, PNG)
+        //Panel Ikon (Baris PDF, JPG, PNG)
         JPanel panelIkon = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         panelIkon.setBackground(Color.WHITE);
         panelIkon.add(createFileIcon("PDF", new Color(220, 53, 69))); // Merah
@@ -86,8 +85,7 @@ public class UploadForm extends JFrame{
         JLabel labelLimit = new JLabel("Maksimal 2MB. Hanya format yang diizinkan.");
         labelLimit.setFont(new Font("SansSerif", Font.PLAIN, 11));
         labelLimit.setForeground(Color.GRAY);
-        
-        // TAMBAHKAN INI (di atas bagian gbc.gridy = 0)
+     
         labelStatus = new JLabel("Pilih file sertifikat untuk kategori: " + kategori);
         labelStatus.setFont(new Font("SansSerif", Font.PLAIN, 11));
         labelStatus.setForeground(Color.GRAY);
@@ -109,7 +107,7 @@ public class UploadForm extends JFrame{
         btnSimpan.setFont(new Font("SansSerif", Font.BOLD, 14));
         mainPanel.add(btnSimpan, BorderLayout.SOUTH);
 
-        // --- LISTENERS ---
+        //  LISTENERS 
         btnPilih.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
             int result = fc.showOpenDialog(this);
@@ -130,9 +128,9 @@ public class UploadForm extends JFrame{
         label.setFont(new Font("Arial", Font.BOLD, 11));
         label.setForeground(Color.WHITE);
         label.setBackground(warnaBg);
-        label.setOpaque(true); // Wajib agar warna muncul
+        label.setOpaque(true); 
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setBorder(new EmptyBorder(5, 10, 5, 10)); // Padding kotak
+        label.setBorder(new EmptyBorder(5, 10, 5, 10)); 
         return label;
     }
 
@@ -142,7 +140,7 @@ public class UploadForm extends JFrame{
             return;
         }
 
-        // Tentukan kolom Foreign Key berdasarkan kategori (Tabel Sertifikat)
+        // Kolom Foreign Key berdasarkan kategori (Tabel Sertifikat)
         String kolomFK = kategori.equalsIgnoreCase("Akademik") ? "id_prestasi_akademik" : "id_prestasi_non";
         
         // QUERY: Masuk ke tabel sertifikat
@@ -159,11 +157,11 @@ public class UploadForm extends JFrame{
             
             ps.executeUpdate();
             JOptionPane.showMessageDialog(this, "Sertifikat Berhasil Diupload!");
-            this.dispose(); // Tutup jendela setelah berhasil
+            this.dispose(); 
             
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Gagal Simpan: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Gagal Simpan: " + ex.getMessage()); // MODUL 7: Exception Handling
         }
     }
 }

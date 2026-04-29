@@ -30,17 +30,15 @@ public class ManajemenDataPrestasi extends JPanel {
     private JComboBox<String> jenisCombo = new JComboBox<>();
     private JComboBox<String> kategoriCombo = new JComboBox<>(new String[]{"Akademik", "Non-Akademik"});
 
-    // Kolom tabel ditambah "Kategori" agar admin tahu asal tabelnya
     private DefaultTableModel model = new DefaultTableModel(new String[]{"ID","Nama Siswa", "Nama Prestasi", "Status", "Kategori","Aksi", "Path"}, 0);
     private JTable table = new JTable(model);
     private ManajemenPrestasiDAO dao = new ManajemenPrestasiDAO();
 
     public ManajemenDataPrestasi() {
-        // PERBAIKAN: JPanel tidak butuh setTitle atau setSize
         setBackground(Color.WHITE);
         setLayout(new BorderLayout());
 
-        // --- HEADER ---
+        // HEADER 
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
@@ -51,7 +49,7 @@ public class ManajemenDataPrestasi extends JPanel {
         headerPanel.add(lblJudul);
         add(headerPanel, BorderLayout.NORTH);
 
-        // --- CENTER PANEL ---
+        //  CENTER PANEL 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(bgColor);
 
@@ -82,14 +80,14 @@ public class ManajemenDataPrestasi extends JPanel {
         gbc.gridx = 1; gbc.gridwidth = 3;
         formInput.add(namaField, gbc);
         
-        // Baris Baru untuk ID Siswa
-        gbc.gridx = 0; gbc.gridy = 4; // Pastikan gridy tidak tabrakan dengan yang lain
+        // Baris 3: ID Siswa
+        gbc.gridx = 0; gbc.gridy = 4; 
         formInput.add(new JLabel("ID Siswa") {{ setFont(labelFont); }}, gbc);
 
         gbc.gridx = 1; gbc.gridwidth = 3;
-        formInput.add(siswaField, gbc); // Sekarang variabel ini sudah dikenal
+        formInput.add(siswaField, gbc); 
 
-        // Baris 3: Tingkat & Jenis
+        // Baris 4: Tingkat & Jenis
         gbc.gridwidth = 1; gbc.gridy = 2;
         gbc.gridx = 0;
         formInput.add(new JLabel("Tingkat") {{ setFont(labelFont); }}, gbc);
@@ -100,7 +98,7 @@ public class ManajemenDataPrestasi extends JPanel {
         gbc.gridx = 3;
         formInput.add(jenisCombo, gbc);
 
-        // Baris 4: Cari
+        // Baris 5: Cari
         gbc.gridx = 0; gbc.gridy = 3;
         formInput.add(new JLabel("Cari Data") {{ setFont(labelFont); }}, gbc);
         gbc.gridx = 1; gbc.gridwidth = 3;
@@ -143,7 +141,7 @@ public class ManajemenDataPrestasi extends JPanel {
         centerPanel.add(tableContainer, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- LISTENERS ---
+        //  LISTENERS
         loadTable();
         loadCombo();
         
@@ -163,22 +161,19 @@ public class ManajemenDataPrestasi extends JPanel {
     public void mouseClicked(MouseEvent e) {
         int r = table.getSelectedRow();
         idField.setText(model.getValueAt(r, 0).toString());
-        // Jika kolom nama_siswa ada di indeks 1, 
-        // pastikan kamu punya cara mengambil ID Siswa-nya (atau tampilkan namanya saja)
         namaField.setText(model.getValueAt(r, 2).toString());
         kategoriCombo.setSelectedItem(model.getValueAt(r, 4).toString());
         
-        idField.setEditable(false); // ID tidak boleh diubah saat update
+        idField.setEditable(false); 
     }
     });
     }
     private void styleTableStatus() {
-        // KONFIGURASI KOLOM AKSI (DILAKUKAN SEKALI SAJA)
+
         table.getColumnModel().getColumn(5).setPreferredWidth(250);
         table.getColumnModel().getColumn(5).setCellRenderer(new ActionRendererAdmin());
         table.getColumnModel().getColumn(5).setCellEditor(new ActionEditorAdmin());
 
-        // SEMBUNYIKAN KOLOM PATH
         table.getColumnModel().getColumn(6).setMinWidth(0);
         table.getColumnModel().getColumn(6).setMaxWidth(0);
         table.getColumnModel().getColumn(6).setWidth(0);
@@ -203,7 +198,7 @@ public class ManajemenDataPrestasi extends JPanel {
     private void resetForm() {
     idField.setText("");
     namaField.setText("");
-    siswaField.setText(""); // Tambahkan ini
+    siswaField.setText(""); 
     idField.setEditable(true);
     table.clearSelection();
     }
@@ -217,7 +212,6 @@ public class ManajemenDataPrestasi extends JPanel {
         return b;
     }
 
-    // Dipanggil oleh DashboardAdmin untuk mengambil konten panel ini
     public JPanel getPanel() {
         return this;
     }
@@ -231,8 +225,8 @@ public class ManajemenDataPrestasi extends JPanel {
                 rs.getString("nama_siswa"),
                 rs.getString("nama_prestasi"),
                 rs.getString("status"),
-                rs.getString("kategori"), // Sekarang ada di indeks 4
-                "" ,           // Mengisi kolom tombol Aksi
+                rs.getString("kategori"), 
+                "" ,           
                 rs.getString("path")
             });
         }
@@ -253,17 +247,14 @@ public class ManajemenDataPrestasi extends JPanel {
     }
 
     void insert() {
-    // 1. Tambahkan pengecekan agar ID Siswa tidak kosong
     if (idField.getText().isEmpty() || namaField.getText().isEmpty() || siswaField.getText().isEmpty()) {
         JOptionPane.showMessageDialog(this, "ID Prestasi, Nama, dan ID Siswa harus diisi!");
         return;
     }
 
-    // 2. PERBAIKAN UTAMA: Ambil ID dari field, bukan tulisan "ADMIN_INPUT"
     String idSiswa = siswaField.getText(); 
     Prestasi p = new Prestasi(idField.getText(), namaField.getText(), idSiswa);
 
-    // 3. Sisanya tetap sama
     String kat = kategoriCombo.getSelectedItem().toString();
     dao.insert(p, tingkatCombo.getSelectedItem().toString(), jenisCombo.getSelectedItem().toString(), kat);
     loadTable();
@@ -307,7 +298,6 @@ public class ManajemenDataPrestasi extends JPanel {
     if (r == -1) return;
 
     String id = model.getValueAt(r, 0).toString().trim();
-    // UBAH: dari indeks 3 ke indeks 4 karena ada kolom nama_siswa
     String kat = model.getValueAt(r, 4).toString().trim(); 
 
     int confirm = JOptionPane.showConfirmDialog(this, "Hapus data " + id + "?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
@@ -328,7 +318,7 @@ public class ManajemenDataPrestasi extends JPanel {
                     "Hasil Cari"
                 });
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { e.printStackTrace(); } // MODUL 7: Exception Handling
     }
 
     void cetakKePDF() {
@@ -337,8 +327,7 @@ public class ManajemenDataPrestasi extends JPanel {
             table.print(JTable.PrintMode.FIT_WIDTH, h, new MessageFormat("Halaman {0}"));
         } catch (Exception e) { e.printStackTrace(); }
     }
-    
-    // Panel penampung tombol aksi admin
+
     class PanelAksiAdmin extends JPanel {
         JButton btnPreview = new JButton("👁");
         JButton btnSetuju = new JButton("✔");

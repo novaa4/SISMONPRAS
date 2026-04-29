@@ -4,7 +4,7 @@ import java.sql.*;
 import javax.swing.JOptionPane;
 import koneksi.Koneksi;
 import model.Prestasi;
-
+// MODUL 6: Interface (implements)
 public class PrestasiDAO {
 
     public void insertWithSertifikat(Prestasi p, String idTingkat, String idJenis, String kategori, String pathFile) {
@@ -12,7 +12,7 @@ public class PrestasiDAO {
     String kolomId = kategori.equalsIgnoreCase("Akademik") ? "id_prestasi_akademik" : "id_prestasi_non";
 
     try (Connection c = Koneksi.getConnection()) {
-        c.setAutoCommit(false); // Memulai transaksi agar kedua insert sukses bersamaan
+        c.setAutoCommit(false); 
 
         // 1. Insert ke tabel prestasi
         String sqlPres = "INSERT INTO " + tabel + " (" + kolomId + ", id_siswa, nama_prestasi, id_tingkat, id_jenis, status) VALUES (?, ?, ?, ?, ?, 'Pending')";
@@ -28,7 +28,7 @@ public class PrestasiDAO {
         if (pathFile != null && !pathFile.isEmpty()) {
             String sqlSertif = "INSERT INTO sertifikat (id_sertifikat, " + kolomId + ", nama_file, tanggal_terbit) VALUES (?, ?, ?, NOW())";
             PreparedStatement psSertif = c.prepareStatement(sqlSertif);
-            psSertif.setString(1, "CERT-" + System.currentTimeMillis()); // Generate ID Sertifikat unik
+            psSertif.setString(1, "CERT-" + System.currentTimeMillis()); 
             psSertif.setString(2, p.getId());
             psSertif.setString(3, pathFile);
             psSertif.executeUpdate();
@@ -40,12 +40,10 @@ public class PrestasiDAO {
         e.printStackTrace();
     }
 }
-    // Cari method update di PrestasiDAO.java dan ubah menjadi seperti ini:
     public void update(Prestasi p, String idTingkat, String idJenis, String kategori, String path) {
     String tabel = kategori.equalsIgnoreCase("Akademik") ? "prestasi_akademik" : "prestasi_non";
     String kolomId = kategori.equalsIgnoreCase("Akademik") ? "id_prestasi_akademik" : "id_prestasi_non";
 
-    // QUERY BERSIH: Tanpa file_path
     String sql = "UPDATE " + tabel + " SET nama_prestasi=?, id_tingkat=?, id_jenis=? WHERE " + kolomId + "=?";
     
     try (Connection c = Koneksi.getConnection();
@@ -66,14 +64,10 @@ public class PrestasiDAO {
 
     // --- FITUR HAPUS ---
 public void delete(String id, String kategori) {
-    // 1. Bersihkan variabel dari spasi liar dan pastikan tidak null
     String idBersih = (id != null) ? id.trim() : "";
     String katBersih = (kategori != null) ? kategori.trim() : "";
-
-    // 2. Logika penentuan tabel yang lebih fleksibel
     String tabel, kolomId;
-    
-    // Gunakan .contains atau .equalsIgnoreCase yang mencakup kemungkinan teks dari JTable
+ 
     if (katBersih.equalsIgnoreCase("Akademik") || katBersih.contains("Akademik")) {
         tabel = "prestasi_akademik";
         kolomId = "id_prestasi_akademik";
@@ -84,8 +78,7 @@ public void delete(String id, String kategori) {
 
     // 3. Eksekusi Query
     String sql = "DELETE FROM " + tabel + " WHERE " + kolomId + " = ?";
-    
-    // DEBUG: Cek di console NetBeans apakah query-nya sudah benar
+
     System.out.println("DEBUG DELETE -> Tabel: " + tabel + " | Kolom: " + kolomId + " | ID: " + idBersih);
 
     try (Connection c = Koneksi.getConnection();
@@ -97,7 +90,6 @@ public void delete(String id, String kategori) {
         if (rowsAffected > 0) {
             JOptionPane.showMessageDialog(null, "Data " + katBersih + " Berhasil Dihapus!");
         } else {
-            // Jika masuk ke sini, berarti SQL jalan tapi ID tidak ketemu di tabel tersebut
             JOptionPane.showMessageDialog(null, "Gagal: Data dengan ID " + idBersih + " tidak ditemukan di tabel " + tabel);
         }
     } catch (SQLException e) {
@@ -105,12 +97,11 @@ public void delete(String id, String kategori) {
     }
 }
    
-
     // --- AMBIL DATA GABUNGAN (UNION) ---
    public ResultSet getPrestasiBySiswa(String idSiswa) throws Exception {
     Connection c = Koneksi.getConnection();
 
-    // Query menggunakan LEFT JOIN untuk menghubungkan prestasi dengan sertifikatnya
+    // Query menggunakan LEFT JOIN untuk menghubungkan prestasi dengan sertifikat
     String sql = "SELECT p.id_prestasi_akademik AS id, p.nama_prestasi, p.status, 'Akademik' AS kategori, s.nama_file AS file_path " +
                  "FROM prestasi_akademik p " +
                  "LEFT JOIN sertifikat s ON p.id_prestasi_akademik = s.id_prestasi_akademik " +

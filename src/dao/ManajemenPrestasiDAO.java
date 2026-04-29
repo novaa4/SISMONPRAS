@@ -34,7 +34,7 @@ public class ManajemenPrestasiDAO {
              PreparedStatement ps = c.prepareStatement(sql)) {
             
             ps.setString(1, p.getId());
-            ps.setString(2, p.getIdSiswa()); // Dinamis: Mengambil ID siswa yang login
+            ps.setString(2, p.getIdSiswa()); 
             ps.setString(3, p.getNama());
             ps.setString(4, idTingkat);
             ps.setString(5, idJenis);
@@ -67,14 +67,11 @@ public class ManajemenPrestasiDAO {
     }
 
     public void delete(String id, String kategori) {
-    // 1. Bersihkan variabel dari spasi liar dan pastikan tidak null
     String idBersih = (id != null) ? id.trim() : "";
     String katBersih = (kategori != null) ? kategori.trim() : "";
 
-    // 2. Logika penentuan tabel yang lebih fleksibel
     String tabel, kolomId;
-    
-    // Gunakan .contains atau .equalsIgnoreCase yang mencakup kemungkinan teks dari JTable
+
     if (katBersih.equalsIgnoreCase("Akademik") || katBersih.contains("Akademik")) {
         tabel = "prestasi_akademik";
         kolomId = "id_prestasi_akademik";
@@ -83,10 +80,9 @@ public class ManajemenPrestasiDAO {
         kolomId = "id_prestasi_non";
     }
 
-    // 3. Eksekusi Query
     String sql = "DELETE FROM " + tabel + " WHERE " + kolomId + " = ?";
     
-    // DEBUG: Cek di console NetBeans apakah query-nya sudah benar
+    // DEBUG
     System.out.println("DEBUG DELETE -> Tabel: " + tabel + " | Kolom: " + kolomId + " | ID: " + idBersih);
 
     try (Connection c = Koneksi.getConnection();
@@ -98,17 +94,15 @@ public class ManajemenPrestasiDAO {
         if (rowsAffected > 0) {
             JOptionPane.showMessageDialog(null, "Data " + katBersih + " Berhasil Dihapus!");
         } else {
-            // Jika masuk ke sini, berarti SQL jalan tapi ID tidak ketemu di tabel tersebut
             JOptionPane.showMessageDialog(null, "Gagal: Data dengan ID " + idBersih + " tidak ditemukan di tabel " + tabel);
         }
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(null, "Database Error: " + e.getMessage());
     }
 }
-    // --- AMBIL SEMUA DATA (UNTUK ADMIN) ---
+    //AMBIL DATA UNTUK ADMIN ( SEMUA DATA )
     public ResultSet getData() throws Exception {
     Connection c = Koneksi.getConnection();
-    // Query dengan JOIN untuk mengambil Nama Siswa dan Path Sertifikat
     String sql = "SELECT p.id_prestasi_akademik AS id, s.nama_siswa, p.nama_prestasi, p.status, 'Akademik' AS kategori, ser.nama_file AS path " +
                  "FROM prestasi_akademik p " +
                  "JOIN siswa s ON p.id_siswa = s.id_siswa " +
@@ -120,7 +114,7 @@ public class ManajemenPrestasiDAO {
                  "LEFT JOIN sertifikat ser ON p.id_prestasi_non = ser.id_prestasi_non";
     return c.createStatement().executeQuery(sql);
     }
-    // --- AMBIL DATA PER SISWA (UNTUK DASHBOARD SISWA/USER) ---
+    // AMBIL DATA PER SISWA (UNTUK DASHBOARD SISWA/USER) 
     public ResultSet getPrestasiBySiswa(String idSiswa) throws Exception {
     Connection c = Koneksi.getConnection();
     String sql = "SELECT p.id_prestasi_akademik AS id, p.nama_prestasi, p.status, 'Akademik' AS kategori, ser.nama_file AS path " +
@@ -171,7 +165,6 @@ public class ManajemenPrestasiDAO {
     }
     public ResultSet search(String key) throws Exception {
     Connection c = Koneksi.getConnection();
-    // Kita tambahkan kolom 'kategori' manual di dalam masing-masing SELECT
     String sql = "SELECT * FROM (" +
                  "  SELECT id_prestasi_akademik AS id, nama_prestasi, status, 'Akademik' AS kategori FROM prestasi_akademik " +
                  "  UNION " +

@@ -27,21 +27,18 @@ public class FormPrestasi extends JPanel {
     private JTextField searchField = new JTextField();
     private JComboBox<String> tingkatCombo = new JComboBox<>();
     private JComboBox<String> jenisCombo = new JComboBox<>();
-    // TAMBAHKAN: Combo Kategori untuk memilih tabel tujuan
     private JComboBox<String> kategoriCombo = new JComboBox<>(new String[]{"Akademik", "Non-Akademik"});
 
-    // Tambahkan kolom Kategori di tabel agar admin/siswa tahu asal datanya
     private DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "Nama Prestasi", "Status", "Kategori","Aksi","Path"}, 0);
     private JTable table = new JTable(model);
     private PrestasiDAO dao = new PrestasiDAO();
     
-    // Variabel untuk menampung ID Siswa yang sedang login (seharusnya dikirim dari Login/Dashboard)
+    // Variabel untuk menampung ID Siswa yang sedang login 
     private String currentIdSiswa = "3290"; 
 
     public FormPrestasi(String idSiswa) {
         this.currentIdSiswa = idSiswa;
 
-        // PERBAIKAN: JPanel tidak butuh setTitle, setSize, dll.
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -56,7 +53,7 @@ public class FormPrestasi extends JPanel {
         headerPanel.add(lblJudul);
         add(headerPanel, BorderLayout.NORTH);
 
-        // --- CENTER PANEL ---
+        // CENTER PANEL 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(bgColor);
 
@@ -142,7 +139,7 @@ public class FormPrestasi extends JPanel {
         centerPanel.add(tableContainer, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- LISTENERS ---
+        // LISTENERS 
         loadTable();
         loadCombo();
         
@@ -179,7 +176,7 @@ public class FormPrestasi extends JPanel {
             }
         });
     }
-    // --- LOGIKA DATA (Sama seperti sebelumnya) ---
+    // LOGIKA DATA 
     public void loadTable() {
     model.setRowCount(0);
     try (ResultSet rs = dao.getPrestasiBySiswa(currentIdSiswa)) {
@@ -193,14 +190,13 @@ public class FormPrestasi extends JPanel {
                 rs.getString("file_path")
             });
         }
-    } catch (Exception e) { 
+    } catch (Exception e) { // MODUL 7: Exception Handling
         e.printStackTrace(); 
         JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
     }
     
     private void styleTableStatus() {
-    // 1. STYLE UNTUK KOLOM STATUS (Kolom Indeks 2)
     table.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -208,8 +204,7 @@ public class FormPrestasi extends JPanel {
             label.setHorizontalAlignment(CENTER);
             
             String status = (value != null) ? value.toString() : "";
-            
-            // Memberikan warna teks berdasarkan status
+       
             if (status.equalsIgnoreCase("Valid")) {
                 label.setForeground(new Color(46, 125, 50)); // Hijau
                 label.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -230,7 +225,6 @@ public class FormPrestasi extends JPanel {
           table.getColumnModel().getColumn(4).setCellRenderer(new ActionRenderer());
           table.getColumnModel().getColumn(4).setCellEditor(new ActionEditor());
 
-    // Sembunyikan Kolom Path (Indeks 5)
           table.getColumnModel().getColumn(5).setMinWidth(0);
           table.getColumnModel().getColumn(5).setMaxWidth(0);
           table.getColumnModel().getColumn(5).setWidth(0);
@@ -266,7 +260,7 @@ public class FormPrestasi extends JPanel {
             JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
             return;
         }
-        Prestasi p = new Prestasi(idField.getText(), namaField.getText(), currentIdSiswa);
+        Prestasi p = new Prestasi(idField.getText(), namaField.getText(), currentIdSiswa); // MODUL 1&2: Object 
         String kat = kategoriCombo.getSelectedItem().toString();
         String pathSertif = "";
         dao.insertWithSertifikat(p, tingkatCombo.getSelectedItem().toString(), jenisCombo.getSelectedItem().toString(), kat,pathSertif);
@@ -282,8 +276,7 @@ public class FormPrestasi extends JPanel {
     
     Prestasi p = new Prestasi(idField.getText(), namaField.getText(), currentIdSiswa);
     String kat = kategoriCombo.getSelectedItem().toString();
-    
-    // Kirim string kosong untuk path karena upload ada di menu sendiri
+  
     dao.update(p, tingkatCombo.getSelectedItem().toString(), jenisCombo.getSelectedItem().toString(), kat, "");
     
     loadTable();
@@ -295,12 +288,11 @@ public class FormPrestasi extends JPanel {
     if (r == -1) return;
 
     String id = model.getValueAt(r, 0).toString().trim();
-    // Samakan dengan Admin: ambil dari kolom Kategori (Indeks 4)
     String kat = model.getValueAt(r, 4).toString().trim(); 
 
     if (JOptionPane.showConfirmDialog(this, "Hapus prestasi: " + id + "?", "Konfirmasi", JOptionPane.YES_NO_OPTION) == 0) {
         dao.delete(id, kat);
-        loadTable(); // Refresh tabel setelah hapus
+        loadTable(); 
     }
 }
 
@@ -319,7 +311,7 @@ public class FormPrestasi extends JPanel {
         } catch (Exception e) { e.printStackTrace(); }
     }
     
-    // --- RENDERER UNTUK MENAMPILKAN TOMBOL ---
+    //  RENDERER UNTUK MENAMPILKAN TOMBOL 
     class ActionPanelRenderer extends JPanel implements javax.swing.table.TableCellRenderer {
         public ActionPanelRenderer() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
@@ -345,7 +337,7 @@ public class FormPrestasi extends JPanel {
     }
 }
 
-// --- EDITOR UNTUK MENANGANI KLIK TOMBOL ---
+// EDITOR UNTUK MENANGANI KLIK TOMBOL 
     class ActionPanelEditor extends DefaultCellEditor {
         protected JPanel panel;
         protected JButton btnFile;
@@ -365,7 +357,7 @@ public class FormPrestasi extends JPanel {
             menu.show(btnFile, 0, btnFile.getHeight());
         });
 
-        // Logika Hapus (Contoh)
+        // Logika Hapus 
         hapus.addActionListener(e -> delete());
 
         panel.add(edit); panel.add(hapus); panel.add(btnFile);
@@ -379,7 +371,7 @@ public class FormPrestasi extends JPanel {
     @Override
     public Object getCellEditorValue() { return ""; }
     }
-    // --- A. CLASS TAMPILAN TOMBOL ---
+    //  CLASS TAMPILAN TOMBOL 
     class PanelAksi extends JPanel {
     JButton btnEdit = new JButton("✎");
     JButton btnHapus = new JButton("🗑");
@@ -396,7 +388,7 @@ public class FormPrestasi extends JPanel {
     }
 }
 
-    // --- B. CLASS RENDERER ---
+    // CLASS RENDERER 
     class ActionRenderer implements javax.swing.table.TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -406,10 +398,10 @@ public class FormPrestasi extends JPanel {
 
         if (path.isEmpty() || path.equals("null")) {
             p.btnFile.setText("No File");
-            p.btnFile.setBackground(Color.LIGHT_GRAY); // Warna abu jika kosong
+            p.btnFile.setBackground(Color.LIGHT_GRAY); 
         } else {
             p.btnFile.setText("Lihat File");
-            p.btnFile.setBackground(new Color(13, 110, 253)); // Biru jika ada isi
+            p.btnFile.setBackground(new Color(13, 110, 253)); 
         }
         
         p.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
@@ -417,7 +409,7 @@ public class FormPrestasi extends JPanel {
     }
 }
 
-// --- CLASS EDITOR (LOGIKA KLIK TOMBOL DALAM TABEL) ---
+// CLASS EDITOR 
     class ActionEditor extends AbstractCellEditor implements javax.swing.table.TableCellEditor {
         private PanelAksi panel = new PanelAksi();
 
@@ -433,7 +425,7 @@ public class FormPrestasi extends JPanel {
                     try {
                         Desktop.getDesktop().open(new java.io.File(path));
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Gagal membuka file!");
+                        JOptionPane.showMessageDialog(null, "Gagal membuka file!"); // MODUL 7: Exception Handling
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "File belum diupload!");
@@ -451,7 +443,7 @@ public class FormPrestasi extends JPanel {
             stopCellEditing();
             int row = table.getSelectedRow();
             if (row != -1) {
-                // Pindahkan data tabel kembali ke field input
+                // Memindahkan data tabel kembali ke field input
                 idField.setText(table.getValueAt(row, 0).toString());
                 namaField.setText(table.getValueAt(row, 1).toString());
                 kategoriCombo.setSelectedItem(table.getValueAt(row, 3).toString());
@@ -459,14 +451,11 @@ public class FormPrestasi extends JPanel {
             }
         });
     }
-    
-
-    // Fungsi pembantu untuk membuka UploadForm
+   
     private void bukaFormUpload(String id, String kat) {
         UploadForm fUpload = new UploadForm(id, kat);
         fUpload.setVisible(true);
-        
-        // Refresh tabel otomatis saat Form Upload ditutup
+
         fUpload.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
@@ -475,7 +464,6 @@ public class FormPrestasi extends JPanel {
         });
     }
 
-    // --- METHOD WAJIB (MENGHILANGKAN ERROR "NOT ABSTRACT") ---
     @Override
     public Object getCellEditorValue() {
         return "";
@@ -483,7 +471,6 @@ public class FormPrestasi extends JPanel {
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        // Mengembalikan panel tombol agar tampil di sel tabel
         panel.setBackground(table.getSelectionBackground());
         return panel;
     }

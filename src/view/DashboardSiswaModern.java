@@ -10,12 +10,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
 import java.sql.*;
-import dao.PrestasiDAO; // Menggunakan Kelas DAO
+import dao.PrestasiDAO; 
 import koneksi.Koneksi;
 
 public class DashboardSiswaModern extends JFrame {
 
-    // --- VARIABEL GLOBAL ---
+    //  VARIABEL GLOBAL 
     private CardLayout cardLayout = new CardLayout();
     private JPanel mainContentCard = new JPanel(cardLayout);
     private PrestasiDAO dao = new PrestasiDAO();
@@ -27,8 +27,8 @@ public class DashboardSiswaModern extends JFrame {
     private FormPrestasi panelInput;
     private JButton btnDashboard, btnInput, btnUpload;
     
-    private final Color COLOR_PURPLE = new Color(173, 126, 255); // Ungu pastel kartu
-    private final Color COLOR_SIDEBAR = new Color(25, 118, 210); // Biru sidebar
+    private final Color COLOR_PURPLE = new Color(173, 126, 255); 
+    private final Color COLOR_SIDEBAR = new Color(25, 118, 210); 
     private final Color COLOR_BG = new Color(245, 247, 251);
 
     public DashboardSiswaModern(String idSiswa) {
@@ -41,7 +41,7 @@ public class DashboardSiswaModern extends JFrame {
         setLayout(new BorderLayout());
         setExtendedState(JFrame.MAXIMIZED_BOTH); 
 
-        // --- SIDEBAR ---
+        //  SIDEBAR 
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(25, 118, 210));
         sidebar.setPreferredSize(new Dimension(250, 750));
@@ -62,7 +62,7 @@ public class DashboardSiswaModern extends JFrame {
         sidebar.add(btnInput);
         sidebar.add(btnLogout);
 
-        // --- TOPBAR ---
+        //  TOPBAR 
         JPanel topbar = new JPanel(new BorderLayout());
         topbar.setBackground(Color.WHITE);
         topbar.setPreferredSize(new Dimension(1200, 70));
@@ -80,19 +80,19 @@ public class DashboardSiswaModern extends JFrame {
         topbar.add(titleLbl, BorderLayout.WEST);
         topbar.add(userLabel, BorderLayout.EAST);
 
-        // --- PENYUSUNAN CARDLAYOUT ---
+        // PENYUSUNAN CARDLAYOUT 
         mainContentCard.add(createDashboardHome(), "DASHBOARD");
         this.panelInput = new FormPrestasi(currentIdSiswa); // Kirim ID Siswa di sini
         mainContentCard.add(panelInput, "INPUT");
 
-        // --- ASSEMBLE ---
+        // ASSEMBLE 
         add(sidebar, BorderLayout.WEST);
         add(topbar, BorderLayout.NORTH);
         add(mainContentCard, BorderLayout.CENTER);
 
-        // --- LOGIKA NAVIGASI & REFRESH ---
+        //  LOGIKA NAVIGASI & REFRESH 
         btnDashboard.addActionListener(e -> {
-            loadDataDashboard(); // DIPICU SAAT KLIK: Refresh data dari DAO
+            loadDataDashboard(); 
             updateNavUI(btnDashboard);
             cardLayout.show(mainContentCard, "DASHBOARD");
         });
@@ -114,8 +114,7 @@ public class DashboardSiswaModern extends JFrame {
         setVisible(true);
     }
 
-    // --- METHOD DAO: LOAD DATA ---
-    // Cari method loadDataDashboard di DashboardSiswaModern.java
+    // METHOD DAO: LOAD DATA 
     void loadDataDashboard() {
         modelDashboard.setRowCount(0);
         int total = 0;
@@ -129,7 +128,7 @@ public class DashboardSiswaModern extends JFrame {
                 });
             }
             lblTotalAngka.setText(String.valueOf(total));
-    } catch (Exception e) {
+    } catch (Exception e) { // MODUL 7: Exception Handling
         e.printStackTrace();
     }
 }
@@ -142,7 +141,7 @@ public class DashboardSiswaModern extends JFrame {
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    // --- UI GENERATOR: HALAMAN HOME ---
+    // UI GENERATOR: HALAMAN HOME 
     private JPanel createDashboardHome() {
         JPanel homePanel = new JPanel(new BorderLayout(0, 25));
         homePanel.setBackground(COLOR_BG);
@@ -157,7 +156,7 @@ public class DashboardSiswaModern extends JFrame {
         tableHeader.setOpaque(false);
         tableHeader.setBorder(new EmptyBorder(10, 0, 10, 0));
 
-    // Card 1: Profil (PASTIKAN MENGGUNAKAN createPurpleCard)
+    // Card 1: Profil 
         JPanel profileCard = createPurpleCard(); 
         profileCard.add(new JLabel(new UserIcon()), BorderLayout.WEST);
     
@@ -172,7 +171,7 @@ public class DashboardSiswaModern extends JFrame {
         pText.add(lblAktif);
         profileCard.add(pText, BorderLayout.CENTER);
 
-    // Card 2: Total (PASTIKAN MENGGUNAKAN createPurpleCard)
+    // Card 2: Total 
        JPanel totalCard = createPurpleCard();
        totalCard.add(new JLabel(new TrophyIcon()), BorderLayout.WEST);
     
@@ -190,15 +189,14 @@ public class DashboardSiswaModern extends JFrame {
        statsWrapper.add(profileCard);
        statsWrapper.add(totalCard);
        
-       // --- 2. Tabel Section (Dengan Judul) ---
-       JPanel tableContainer = new JPanel(new BorderLayout()); // Wadah utama tabel + judul
+       // Tabel Section 
+       JPanel tableContainer = new JPanel(new BorderLayout()); 
        tableContainer.setOpaque(false);
 
         modelDashboard = new DefaultTableModel(new String[]{"ID", "Nama Prestasi", "Status"}, 0);
         tableDashboard = new JTable(modelDashboard);
         tableDashboard.setRowHeight(40);
-        
-        // Renderer untuk warna status
+ 
         tableDashboard.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -234,7 +232,7 @@ public class DashboardSiswaModern extends JFrame {
         return homePanel;
     }
 
-    // --- HELPER UI ---
+    // HELPER UI 
     private void updateNavUI(JButton active) {
         btnDashboard.setBackground(new Color(25, 118, 210));
         btnInput.setBackground(new Color(25, 118, 210));
@@ -252,7 +250,7 @@ public class DashboardSiswaModern extends JFrame {
     }
     private JPanel createPurpleCard() {
     JPanel card = new JPanel(new BorderLayout(25, 0));
-    card.setBackground(COLOR_PURPLE); // Menggunakan variabel global Ungu yang sudah kamu buat
+    card.setBackground(COLOR_PURPLE); 
     card.setBorder(new EmptyBorder(20, 30, 20, 30));
     return card;
 }
@@ -271,14 +269,14 @@ public class DashboardSiswaModern extends JFrame {
         return btn;
     }
 
-    // --- ICONS ---
+    // ICONS 
     class UserIcon implements Icon {
         @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(Color.WHITE);
-            g2.fillOval(x, y, 60, 60); // Lingkaran putih besar
-            g2.setColor(new Color(60, 60, 60)); // Icon orang gelap
+            g2.fillOval(x, y, 60, 60); 
+            g2.setColor(new Color(60, 60, 60));
             g2.fillOval(x + 20, y + 12, 20, 20);
             g2.fillArc(x + 10, y + 35, 40, 30, 0, 180);
             g2.dispose();
@@ -286,41 +284,35 @@ public class DashboardSiswaModern extends JFrame {
         @Override public int getIconWidth() { return 70; }
         @Override public int getIconHeight() { return 65; }
     }
-    // --- ICONS: TROPHY IMPROVED ---
+    // ICONS: TROPHY IMPROVED 
     class TrophyIcon implements Icon {
     @Override public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        // Warna Gradasi Gold (Cerah ke Gelap)
+
         GradientPaint goldGradient = new GradientPaint(
-            x+30, y+5, new Color(255, 215, 0), // Emas Cerah
-            x+30, y+45, new Color(218, 165, 32) // Emas Gelap (Goldenrod)
+            x+30, y+5, new Color(255, 215, 0), 
+            x+30, y+45, new Color(218, 165, 32) 
         );
         g2.setPaint(goldGradient);
 
-        // 1. Badan Utama Piala (Gelas Besar)
         int[] xCup = {x+12, x+48, x+42, x+18}; int[] yCup = {y+5, y+5, y+35, y+35};
         g2.fillPolygon(xCup, yCup, 4);
-        g2.fillOval(x+12, y+2, 36, 6); // Tutup atas oval
+        g2.fillOval(x+12, y+2, 36, 6); 
 
-        // 2. Pegangan Piala (Kanan & Kiri - Efek Outline Realistis)
         g2.setStroke(new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2.setColor(new Color(218, 165, 32)); // Warna Emas Outline
-        g2.drawArc(x+2, y+10, 15, 15, 90, 180); // Pegangan Kiri
-        g2.drawArc(x+43, y+10, 15, 15, 270, 180); // Pegangan Kanan
+        g2.setColor(new Color(218, 165, 32)); 
+        g2.drawArc(x+2, y+10, 15, 15, 90, 180); 
+        g2.drawArc(x+43, y+10, 15, 15, 270, 180); 
 
-        // 3. Batang dan Kaki Piala
         g2.setColor(new Color(218, 165, 32));
-        g2.fillRoundRect(x+26, y+35, 8, 15, 3, 3); // Batang tengah
-        
-        // Kaki Membulat
+        g2.fillRoundRect(x+26, y+35, 8, 15, 3, 3); 
+
         int[] xBase = {x+18, x+42, x+45, x+15}; int[] yBase = {y+50, y+50, y+60, y+60};
         g2.fillPolygon(xBase, yBase, 4);
 
-        // 4. Tambahkan Efek Kilau (Highlight Putih Transparan)
-        g2.setPaint(new Color(255, 255, 255, 100)); // Putih dengan Alpha transparan
-        g2.fillOval(x+20, y+8, 10, 20); // Kilau di badan piala
+        g2.setPaint(new Color(255, 255, 255, 100)); 
+        g2.fillOval(x+20, y+8, 10, 20); 
 
         g2.dispose();
     }

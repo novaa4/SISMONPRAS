@@ -10,11 +10,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
 import java.sql.ResultSet;
-import dao.ManajemenPrestasiDAO; // Pastikan import ini ada
+import dao.ManajemenPrestasiDAO; 
 
 public class DashboardAdmin extends JFrame {
 
-    // --- DEKLARASI GLOBAL (Agar tidak error merah di method lain) ---
+    // DEKLARASI GLOBAL 
     private DefaultTableModel modelDashboard;
     private JTable tableDashboard;
     private CardLayout cardLayout;
@@ -33,7 +33,7 @@ public class DashboardAdmin extends JFrame {
         setLayout(new BorderLayout());
         setExtendedState(JFrame.MAXIMIZED_BOTH); 
 
-        // --- SIDEBAR ---
+        // SIDEBAR 
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(25, 118, 210)); 
         sidebar.setPreferredSize(new Dimension(250, 750));
@@ -56,7 +56,7 @@ public class DashboardAdmin extends JFrame {
         sidebar.add(btnGrafik);
         sidebar.add(btnLogout);
 
-        // --- TOPBAR ---
+        // TOPBAR 
         JPanel topbar = new JPanel(new BorderLayout());
         topbar.setBackground(Color.WHITE);
         topbar.setPreferredSize(new Dimension(1200, 70));
@@ -69,11 +69,11 @@ public class DashboardAdmin extends JFrame {
         titleLbl.setForeground(darkBlueSismon);
         topbar.add(titleLbl, BorderLayout.WEST);
 
-        // --- MAIN CONTENT WITH CARDLAYOUT ---
+        //  MAIN CONTENT WITH CARDLAYOUT 
         cardLayout = new CardLayout();
         mainContentCard = new JPanel(cardLayout);
 
-        // Tambahkan Halaman Dashboard (Home)
+        // Halaman Dashboard (Home)
         mainContentCard.add(createDashboardHome(), "HOME");
         mainContentCard.add(panelManajemen, "MANAJEMEN");
         mainContentCard.add(halamanGrafik, "GRAFIK");
@@ -82,7 +82,7 @@ public class DashboardAdmin extends JFrame {
         add(topbar, BorderLayout.NORTH);
         add(mainContentCard, BorderLayout.CENTER);
 
-        // --- LOGIKA NAVIGASI ---
+        //  LOGIKA NAVIGASI 
         btnDashboard.addActionListener(e -> {
             loadDataDashboard();
             updateNav(btnDashboard);
@@ -94,7 +94,7 @@ public class DashboardAdmin extends JFrame {
             cardLayout.show(mainContentCard, "MANAJEMEN");
         });
         btnGrafik.addActionListener(e -> {
-        halamanGrafik.refreshGrafik(); // Update data dari database sebelum tampil
+        halamanGrafik.refreshGrafik(); 
         updateNav(btnGrafik);
         cardLayout.show(mainContentCard, "GRAFIK");
         });
@@ -105,10 +105,9 @@ public class DashboardAdmin extends JFrame {
             }
         });
 
-        loadDataDashboard(); // Load data saat pertama kali buka
+        loadDataDashboard(); 
         setVisible(true);
     }
-    // ... (Bagian import tetap sama)
 
 public void loadDataDashboard() {
     mainContentCard.add(createDashboardHome(), "HOME");
@@ -205,7 +204,7 @@ private JPanel createDashboardHome() {
         return contentArea;
     }
 
-    // --- BUTTON STYLING ---
+    // BUTTON STYLING 
     private void updateNav(JButton active) {
         JButton[] btns = {btnDashboard, btnPrestasi, btnGrafik};
         for(JButton b : btns) b.setBackground(new Color(25, 118, 210));
